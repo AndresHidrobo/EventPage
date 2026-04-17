@@ -1,0 +1,117 @@
+@model Eventual.Models.Events
+<link rel="stylesheet" href="~/css/details.css" />
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<!-- ══════════════════════════════════════════════════
+     HERO — Imagen del evento en pantalla completa
+══════════════════════════════════════════════════ -->
+<div class="detail-hero">
+    <img src="@Model.FallbackImage"
+         alt="@Model.Name"
+         onerror="this.src='https://picsum.photos/seed/@(Model.id + 99)/1400/600'" />
+
+    <!-- Capa de degradado para que el texto sea legible -->
+    <div class="detail-hero-overlay"></div>
+
+    <!-- Contenido encima de la imagen -->
+    <div class="detail-hero-content">
+        <div class="container">
+            <!-- Botón volver -->
+            <a asp-action="Index" asp-controller="Events"
+               class="detail-back-btn waves-effect waves-light">
+                <i class="material-icons">arrow_back</i>
+                Volver al listado
+            </a>
+
+            <h1 class="detail-title">@Model.Name</h1>
+
+            <div class="detail-meta-row">
+                <span class="detail-meta-item">
+                    <i class="material-icons">calendar_today</i>
+                    @Model.FormattedDate
+                </span>
+                <span class="detail-meta-item">
+                    <i class="material-icons">place</i>
+                    @Model.Location
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     CUERPO — Descripción + acciones
+══════════════════════════════════════════════════ -->
+<div class="container detail-body">
+    <div class="row">
+
+        <!-- Columna principal: descripción -->
+        <div class="col s12 m8">
+            <div class="detail-section-card">
+                <h5 class="detail-section-title">
+                    <i class="material-icons">info</i>
+                    Acerca del evento
+                </h5>
+                <p class="detail-description">@Model.Description</p>
+            </div>
+        </div>
+
+        <!-- Columna lateral: datos clave + acciones -->
+        <div class="col s12 m4">
+            <div class="detail-section-card detail-sidebar">
+
+                <h6 class="detail-sidebar-label">Detalles</h6>
+
+                <!-- Fecha -->
+                <div class="detail-info-row">
+                    <div class="detail-info-icon" style="background:rgba(0,229,255,.12);border-color:rgba(0,229,255,.25);">
+                        <i class="material-icons" style="color:var(--af-cyan);">calendar_today</i>
+                    </div>
+                    <div>
+                        <span class="detail-info-label">Fecha</span>
+                        <span class="detail-info-value">@Model.FormattedDate</span>
+                    </div>
+                </div>
+
+                <!-- Ubicación -->
+                <div class="detail-info-row">
+                    <div class="detail-info-icon" style="background:rgba(124,77,255,.12);border-color:rgba(124,77,255,.25);">
+                        <i class="material-icons" style="color:var(--af-purple);">place</i>
+                    </div>
+                    <div>
+                        <span class="detail-info-label">Lugar</span>
+                        <span class="detail-info-value">@Model.Location</span>
+                    </div>
+                </div>
+
+                <!-- ID -->
+                <div class="detail-info-row">
+                    <div class="detail-info-icon" style="background:rgba(90,106,144,.12);border-color:rgba(90,106,144,.25);">
+                        <i class="material-icons" style="color:var(--af-text-muted);">tag</i>
+                    </div>
+                    <div>
+                        <span class="detail-info-label">ID del evento</span>
+                        <span class="detail-info-value">#@Model.id</span>
+                    </div>
+                </div>
+
+                <!-- Acciones de administración -->
+                <div class="detail-actions">
+                    <a asp-action="Edit" asp-route-id="@Model.id"
+                       class="btn af-btn-primary waves-effect waves-light detail-action-btn">
+                        <i class="material-icons left">edit</i>Editar evento
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@Model.id"
+                       class="btn af-btn-danger waves-effect waves-light detail-action-btn">
+                        <i class="material-icons left">delete</i>Eliminar
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+

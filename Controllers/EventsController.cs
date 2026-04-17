@@ -101,4 +101,11 @@ public class EventsController : Controller
         }
         return RedirectToAction(nameof(Index));
     }
+    // GET: /Events/Detail/5
+    public async Task<IActionResult> Detail(int id)
+    {
+        var ev = await _context.events.FindAsync(id);
+        if (ev == null) return NotFound();
+        return View(ev);
+    }
 }
