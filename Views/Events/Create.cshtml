@@ -1,0 +1,127 @@
+@model Eventual.Models.Events
+<link rel="stylesheet" href="~/css/eventual.css" asp-append-version="true" />
+
+<main class="form-wrapper">
+  <form id="urban-form" asp-action="Create" asp-controller="Events" method="post">
+    @Html.AntiForgeryToken()
+
+    <!-- INFORMACIÓN BÁSICA -->
+    <p class="form-section-label">01 &mdash; Información básica</p>
+    <div class="form-card">
+
+      <!-- Nombre -->
+      <div class="input-field">
+        <i class="material-icons prefix">event</i>
+        <input asp-for="Name" id="nombre-evento" type="text" class="validate" maxlength="150" />
+        <label asp-for="Name" for="nombre-evento">
+          Nombre del evento
+          <span class="required-badge">obligatorio</span>
+        </label>
+        <span asp-validation-for="Name" class="helper-text red-text"></span>
+        <span class="helper-text field-note">Máx. 150 caracteres. Sé claro y memorable.</span>
+      </div>
+
+      <!-- Descripción -->
+      <div class="input-field" style="margin-top:1.75rem;">
+        <i class="material-icons prefix">notes</i>
+        <textarea asp-for="Description" id="descripcion-evento"
+                  class="materialize-textarea validate" data-length="500"></textarea>
+        <label asp-for="Description" for="descripcion-evento">
+          Descripción del evento
+          <span class="required-badge">obligatorio</span>
+        </label>
+        <span asp-validation-for="Description" class="helper-text red-text"></span>
+        <span class="helper-text field-note">Describe la propuesta, artistas, formato, etc.</span>
+      </div>
+
+    </div>
+
+    <!-- LUGAR Y FECHA -->
+    <p class="form-section-label">02 &mdash; Lugar y fecha</p>
+    <div class="form-card">
+
+      <!-- Ubicación -->
+      <div class="input-field">
+        <i class="material-icons prefix">place</i>
+        <input asp-for="Location" id="ubicacion-evento" type="text" class="validate" />
+        <label asp-for="Location" for="ubicacion-evento">
+          Ubicación del evento
+          <span class="required-badge">obligatorio</span>
+        </label>
+        <span asp-validation-for="Location" class="helper-text red-text"></span>
+        <span class="helper-text field-note">Dirección completa o nombre del venue.</span>
+      </div>
+
+      <!-- Fecha -->
+      <div class="input-field" style="margin-top:1.75rem;">
+        <i class="material-icons prefix">calendar_today</i>
+        <!-- datetime-local permite binding directo a DateTime sin parseo -->
+        <input asp-for="EventDate" id="fecha-evento" type="date" class="validate" />
+        <label asp-for="EventDate" for="fecha-evento" class="active">
+          Fecha del evento
+          <span class="required-badge">obligatorio</span>
+        </label>
+        <span asp-validation-for="EventDate" class="helper-text red-text"></span>
+      </div>
+
+    </div>
+
+    <!-- POSTER -->
+    <p class="form-section-label">03 &mdash; Poster del evento</p>
+    <div class="form-card">
+      <div class="input-field">
+        <i class="material-icons prefix">link</i>
+        <input asp-for="Poster" id="poster-url" type="url" class="validate" />
+        <label asp-for="Poster" for="poster-url">
+          URL del poster / imagen
+        </label>
+        <span asp-validation-for="Poster" class="helper-text red-text"></span>
+        <span class="helper-text field-note">Enlace directo a la imagen (JPG, PNG, WEBP). Campo opcional.</span>
+      </div>
+
+      <!-- Preview en tiempo real -->
+      <div id="poster-preview-wrap" style="display:none;margin-top:1rem;">
+        <img id="poster-preview"
+             src=""
+             alt="Preview poster"
+             style="max-height:200px;border-radius:8px;border:1px solid rgba(255,255,255,.15);object-fit:cover;" />
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="submit-area">
+      <button type="submit" class="btn waves-effect btn-submit">
+        <i class="material-icons left" style="font-size:17px;">check</i>
+        Registrar evento
+      </button>
+      <a asp-action="Index" asp-controller="Events" class="btn waves-effect btn-reset">
+        Cancelar
+      </a>
+    </div>
+
+  </form>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Preview de imagen desde URL
+        const posterInput = document.getElementById('poster-url');
+        const previewWrap = document.getElementById('poster-preview-wrap');
+        const previewImg  = document.getElementById('poster-preview');
+
+        if (posterInput) {
+            posterInput.addEventListener('input', function () {
+                const url = this.value.trim();
+                if (url) {
+                    previewImg.src = url;
+                    previewImg.style.display = 'block';
+                    previewWrap.style.display = 'block';
+                    previewImg.onerror = () => previewWrap.style.display = 'none';
+                } else {
+                    previewWrap.style.display = 'none';
+                }
+            });
+        }
+    </script>
+}

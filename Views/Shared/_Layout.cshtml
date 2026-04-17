@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] Eventual</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;500;700&display=swap" rel="stylesheet" />
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <!-- Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="~/css/eventual.css" />
+</head>
+<body class="af-body">
+
+    <!-- NAVBAR -->
+    <nav class="af-navbar z-depth-0">
+        <div class="nav-wrapper container">
+            <a href="/" class="brand-logo af-logo">
+                <i class="material-icons">auto_awesome</i>
+                <span>Event<span class="af-accent">ual</span></span>
+            </a>
+            <a href="#" data-target="mobile-menu" class="sidenav-trigger">
+                <i class="material-icons">menu</i>
+            </a>
+            <ul class="right hide-on-med-and-down">
+                <li><a asp-controller="Events" asp-action="Index" class="af-nav-link af-nav-admin">
+                    <i class="material-icons left">admin_panel_settings</i>Administración
+                </a></li>
+                <li><a asp-controller="Events" asp-action="Create" class="btn af-btn-primary waves-effect waves-light">
+                    <i class="material-icons left">add</i>Nuevo Evento
+                </a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- SIDENAV MOBILE -->
+    <ul class="sidenav af-sidenav" id="mobile-menu">
+        <li class="af-sidenav-header">
+            <div class="user-view">
+                <div class="background af-sidenav-bg"></div>
+                <span class="white-text name" style="font-family:'Rajdhani',sans-serif;font-size:1.4rem;font-weight:700;">
+                    <i class="material-icons tiny">auto_awesome</i> Eventual
+                </span>
+            </div>
+        </li>
+        <li><a asp-controller="Home" asp-action="Index"><i class="material-icons">grid_view</i>Cartelera</a></li>
+        <li><a asp-controller="Events" asp-action="Index"><i class="material-icons">admin_panel_settings</i>Administración</a></li>
+        <li><a asp-controller="Events" asp-action="Create"><i class="material-icons">add_circle</i>Nuevo Evento</a></li>
+    </ul>
+
+    <!-- FLASH MESSAGES -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="af-toast-container">
+            <div class="af-toast af-toast-success">
+                <i class="material-icons">check_circle</i>
+                <span>@TempData["Success"]</span>
+            </div>
+        </div>
+    }
+
+    <!-- CONTENT -->
+    <main class="af-main">
+        @RenderBody()
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="af-footer">
+        <div class="container">
+            <div class="row valign-wrapper" style="margin:0;">
+                <div class="col s12 m6">
+                    <span class="af-logo" style="font-size:1.1rem;">
+                        <i class="material-icons tiny">auto_awesome</i>
+                        <span>Event<span class="af-accent">ual</span></span>
+                    </span>
+                    <p class="af-footer-sub">Sistema de Gestión de Eventos Temáticos</p>
+                </div>
+                <div class="col s12 m6 right-align">
+                    <p class="af-footer-sub">Desarrollado con .NET 8 + MySQL + Materialize CSS</p>
+                    <p class="af-footer-sub">© @DateTime.Now.Year Eventual Colombia</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="~/js/eventual.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

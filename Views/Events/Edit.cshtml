@@ -1,0 +1,103 @@
+@model Eventual.Models.Events
+@{
+    ViewData["Title"] = "Editar Evento";
+}
+
+<div class="af-admin-header">
+    <div class="container">
+        <div class="af-admin-title">
+            <i class="material-icons" style="color:var(--af-purple);">edit</i>
+            Editar Evento
+        </div>
+        <p style="color:var(--af-text-muted);margin:.3rem 0 0;font-size:.9rem;">
+            Modificando: <span style="color:#fff;">@Model.Name</span>
+            <span style="margin-left:.5rem;color:var(--af-text-muted);">· ID #@Model.id</span>
+        </p>
+    </div>
+</div>
+
+<div class="container" style="padding:2.5rem 0 4rem;">
+    <div class="row">
+        <div class="col s12 l8 offset-l2">
+            <div class="af-form-card">
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <input asp-for="id" type="hidden" />
+                    <h5 class="af-form-title">
+                        <i class="material-icons" style="color:var(--af-purple);">info</i>
+                        Información General
+                    </h5>
+
+                    <div class="input-field">
+                        <i class="material-icons prefix">event</i>
+                        <input asp-for="Name" id="Name" type="text" />
+                        <label asp-for="Name" for="Name" class="active">Nombre del Evento *</label>
+                        <span asp-validation-for="Name" class="af-field-error"></span>
+                    </div>
+
+                    <div class="row" style="margin:0;">
+                        <div class="col s12 m6">
+                            <div class="input-field">
+                                <i class="material-icons prefix">calendar_today</i>
+                                <input asp-for="EventDate" id="Date" type="date" />
+                                <label asp-for="EventDate" for="Date" class="active">Fecha del evento *</label>
+                                <span asp-validation-for="EventDate" class="af-field-error"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-field">
+                        <i class="material-icons prefix">place</i>
+                        <input asp-for="Location" id="Location" type="text" />
+                        <label asp-for="Location" for="Location" class="active">Ubicación *</label>
+                        <span asp-validation-for="Location" class="af-field-error"></span>
+                    </div>
+
+                    <div class="input-field">
+                        <i class="material-icons prefix">description</i>
+                        <textarea asp-for="Description" id="Description" class="materialize-textarea" style="min-height:120px;"></textarea>
+                        <label asp-for="Description" for="Description" class="active">Descripción *</label>
+                        <span asp-validation-for="Description" class="af-field-error"></span>
+                    </div>
+
+                    <h5 class="af-form-title" style="margin-top:1rem;">
+                        <i class="material-icons" style="color:var(--af-cyan);">image</i>
+                        Imagen / Poster
+                    </h5>
+
+                    <div class="input-field">
+                        <i class="material-icons prefix">link</i>
+                        <input asp-for="Poster" id="imageUrlInput" type="url" />
+                        <label asp-for="Poster" for="imageUrlInput" class="active">URL del Poster</label>
+                        <span asp-validation-for="Poster" class="af-field-error"></span>
+                    </div>
+
+                    <div style="margin-bottom:1.5rem;">
+                        <img id="imagePreview"
+                             src=""
+                             alt="Preview"
+                             style="display:none;width:100%;max-height:220px;object-fit:cover;border-radius:8px;border:1px solid var(--af-border);" />
+                    </div>
+
+                    <div style="display:flex;gap:.8rem;justify-content:flex-end;border-top:1px solid var(--af-border);padding-top:1.3rem;">
+                        <a asp-action="Index" class="btn af-btn-outline waves-effect">
+                            <i class="material-icons left">cancel</i>Cancelar
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model.id"
+                           class="btn af-btn-danger waves-effect waves-light"
+                           style="margin-right:auto;">
+                            <i class="material-icons left">delete</i>Eliminar
+                        </a>
+                        <button type="submit" class="btn af-btn-primary waves-effect waves-light">
+                            <i class="material-icons left">save</i>Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

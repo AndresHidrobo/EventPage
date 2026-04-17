@@ -1,0 +1,47 @@
+@model Eventual.Models.Events
+@{
+    ViewData["Title"] = "Eliminar Evento";
+}
+
+<div class="container" style="padding:4rem 0;">
+    <div class="af-delete-card">
+        <i class="material-icons af-delete-icon">warning</i>
+
+        <h4 style="font-family:var(--font-display);color:#fff;font-weight:700;margin:.5rem 0;">
+            ¿Eliminar este evento?
+        </h4>
+        <p style="color:var(--af-text-muted);margin-bottom:2rem;">
+            Esta acción es <strong style="color:#ff5983;">irreversible</strong>.
+            El evento y toda su información serán eliminados permanentemente de la base de datos.
+        </p>
+
+        <!-- Event Summary -->
+        <div style="background:var(--af-dark-2);border:1px solid var(--af-border);border-radius:10px;padding:1.2rem;text-align:left;margin-bottom:2rem;">
+            @if (!string.IsNullOrEmpty(Model.Poster))
+            {
+                <img src="@Model.Poster" alt=""
+                     style="width:100%;height:140px;object-fit:cover;border-radius:6px;margin-bottom:.8rem;"
+                     onerror="this.style.display='none'" />
+            }
+            <div style="font-family:var(--font-display);font-size:1.2rem;color:#fff;font-weight:600;">@Model.Name</div>
+            <div class="af-card-meta" style="margin-top:.4rem;">
+                <i class="material-icons" style="color:var(--af-cyan);font-size:1rem;">calendar_today</i>
+                <span style="color:var(--af-text-muted);">@Model.FormattedDate</span>
+            </div>
+            <div class="af-card-meta">
+                <i class="material-icons" style="color:var(--af-purple);font-size:1rem;">place</i>
+                <span style="color:var(--af-text-muted);">@Model.Location</span>
+            </div>
+        </div>
+
+        <form asp-action="Delete" method="post" style="display:flex;gap:.8rem;justify-content:center;">
+            @Html.AntiForgeryToken()
+            <a asp-action="Index" class="btn af-btn-outline waves-effect">
+                <i class="material-icons left">cancel</i>Cancelar
+            </a>
+            <button type="submit" class="btn af-btn-danger waves-effect waves-light">
+                <i class="material-icons left">delete_forever</i>Eliminar Definitivamente
+            </button>
+        </form>
+    </div>
+</div>

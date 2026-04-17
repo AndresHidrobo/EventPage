@@ -1,0 +1,121 @@
+@model IEnumerable<Eventual.Models.Events>
+@{
+    ViewData["Title"] = "Panel de Administración";
+    var search = (string?)ViewBag.Search ?? "";
+
+}
+
+<!-- Admin Header -->
+<div class="af-admin-header">
+    <div class="container">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+            <div>
+                <div class="af-admin-title">
+                    <i class="material-icons">admin_panel_settings</i>
+                    Panel de Administración
+                </div>
+                <p style="color:var(--af-text-muted);margin:.3rem 0 0;font-size:.9rem;">
+                    Gestión completa de eventos — <span style="color:var(--af-cyan);">@Model.Count() registros</span>
+                </p>
+            </div>
+            <a asp-action="Create" class="btn af-btn-primary waves-effect waves-light">
+                <i class="material-icons left">add</i>Nuevo Evento
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container" style="padding:2rem 0 4rem;">
+
+    <!-- Search Bar -->
+    <form asp-action="Index" method="get" style="margin-bottom:1.5rem;">
+        <div style="position:relative;display:inline-block;width:100%;max-width:420px;">
+            <i class="material-icons" style="position:absolute;left:.8rem;top:50%;transform:translateY(-50%);color:var(--af-text-muted);font-size:1.1rem;z-index:1;">search</i>
+            <input type="text" name="search" value="@search" placeholder="Buscar por nombre, lugar, categoría…"
+                   class="af-search-input" style="width:100%;" />
+        </div>
+        @if (!string.IsNullOrEmpty(search))
+        {
+            <a asp-action="Index" class="btn-flat af-btn-outline btn-small waves-effect" style="margin-left:.6rem;vertical-align:middle;">
+                <i class="material-icons left tiny">close</i>Limpiar
+            </a>
+        }
+    </form>
+
+    @if (!Model.Any())
+    {
+        <div class="af-empty">
+            <i class="material-icons">search_off</i>
+            <h5 style="font-family:var(--font-display);color:#fff;">Sin resultados</h5>
+            <p>No se encontraron eventos que coincidan con "@search".</p>
+        </div>
+    }
+    else
+    {
+        <div class="af-table-wrap">
+            <table class="af-table">
+                <thead>
+                    <tr>
+                        <th style="width:52px;"></th>
+                        <th>Evento</th>
+                        <th>Fecha</th>
+                        <th>Ubicación</th>
+                        <th style="text-align:center;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ev in Model)
+                    {
+                        <tr>
+                            <td>
+                                <img class="event-img"
+                                     src="@ev.FallbackImage"
+                                     onerror="this.src='https://picsum.photos/seed/@(ev.id+99)/120/80'"
+                                     alt="" />
+                            </td>
+                            <td>
+                                <div style="font-family:var(--font-display);font-weight:600;color:#fff;font-size:.95rem;">
+                                    @ev.Name
+                                </div>
+                                <div style="font-size:.75rem;color:var(--af-text-muted);margin-top:.15rem;">
+                                    ID #@ev.id
+                                </div>
+                            </td>
+                            <td style="white-space:nowrap;">
+                                <span style="color:var(--af-cyan);font-size:.85rem;">@ev.FormattedDate</span>
+                            </td>
+                            <td>
+                                <span style="font-size:.85rem;color:var(--af-text-muted);">@ev.Location</span>
+                            </td>
+                            <td>
+                                <div style="display:flex;align-items:center;justify-content:center;gap:.4rem;">
+                                    <!-- Ver detalle -->
+                                    <a asp-controller="Events" asp-action="Detail" asp-route-id="@ev.id"
+                                       class="btn-floating btn-small waves-effect"
+                                       style="background:rgba(0,229,255,.15);border:1px solid rgba(0,229,255,.3);"
+                                       title="Ver detalle">
+                                        <i class="material-icons" style="color:var(--af-cyan);">visibility</i>
+                                    </a>
+                                    <!-- Editar -->
+                                    <a asp-action="Edit" asp-route-id="@ev.id"
+                                       class="btn-floating btn-small waves-effect"
+                                       style="background:rgba(124,77,255,.15);border:1px solid rgba(124,77,255,.3);"
+                                       title="Editar">
+                                        <i class="material-icons" style="color:#b388ff;">edit</i>
+                                    </a>
+                                    <!-- Eliminar -->
+                                    <a asp-action="Delete" asp-route-id="@ev.id"
+                                       class="btn-floating btn-small waves-effect"
+                                       style="background:rgba(245,0,87,.1);border:1px solid rgba(245,0,87,.3);"
+                                       title="Eliminar">
+                                        <i class="material-icons" style="color:#ff5983;">delete</i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
