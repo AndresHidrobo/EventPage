@@ -13,6 +13,13 @@ builder.Services.AddDbContext<MysqlDbContext>(options =>
 
 var app = builder.Build();
 
+// Crear la base de datos y la tabla si no existen
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<MysqlDbContext>();
+    db.Database.EnsureCreated();
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -27,7 +34,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapStaticAssets();
-
+app.UseStaticFiles();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Events}/{action=Index}/{id?}")

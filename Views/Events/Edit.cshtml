@@ -1,6 +1,7 @@
 @model Eventual.Models.Events
 @{
     ViewData["Title"] = "Editar Evento";
+    var minDate = DateTime.Today.ToString("yyyy-MM-dd");
 }
 
 <div class="af-admin-header">
@@ -20,9 +21,11 @@
     <div class="row">
         <div class="col s12 l8 offset-l2">
             <div class="af-form-card">
-                <form asp-action="Edit" method="post">
+                <form asp-action="Edit" method="post" enctype="multipart/form-data">
                     @Html.AntiForgeryToken()
                     <input asp-for="id" type="hidden" />
+                    <input asp-for="Poster" type="hidden" />
+
                     <h5 class="af-form-title">
                         <i class="material-icons" style="color:var(--af-purple);">info</i>
                         Información General
@@ -39,9 +42,12 @@
                         <div class="col s12 m6">
                             <div class="input-field">
                                 <i class="material-icons prefix">calendar_today</i>
-                                <input asp-for="EventDate" id="Date" type="date" />
+                                <input asp-for="EventDate" id="Date" type="date" min="@minDate" />
                                 <label asp-for="EventDate" for="Date" class="active">Fecha del evento *</label>
                                 <span asp-validation-for="EventDate" class="af-field-error"></span>
+                                <span class="helper-text" style="color:var(--af-text-muted);font-size:.78rem;">
+                                    Solo se permiten fechas de hoy en adelante.
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -65,18 +71,41 @@
                         Imagen / Poster
                     </h5>
 
-                    <div class="input-field">
-                        <i class="material-icons prefix">link</i>
-                        <input asp-for="Poster" id="imageUrlInput" type="url" />
-                        <label asp-for="Poster" for="imageUrlInput" class="active">URL del Poster</label>
-                        <span asp-validation-for="Poster" class="af-field-error"></span>
+                    <!-- Imagen actual -->
+                    @if (!string.IsNullOrWhiteSpace(Model.Poster))
+                    {
+                        <div style="margin-bottom:1rem;">
+                            <p style="color:var(--af-text-muted);font-size:.82rem;margin-bottom:.4rem;">Imagen actual:</p>
+                            <img src="@Model.Poster"
+                                 alt="Imagen actual"
+                                 style="width:100%;max-height:200px;object-fit:cover;border-radius:8px;border:1px solid var(--af-border);" />
+                        </div>
+                    }
+
+                    <!-- Subida de nueva imagen -->
+                    <div style="margin-bottom:1rem;">
+                        <label style="display:block;color:var(--af-text-muted);font-size:.85rem;margin-bottom:.6rem;">
+                            Cambiar imagen (JPG, PNG, WEBP, GIF) — dejar vacío para conservar la actual. Se ajustará a máx. 1200×800 px.
+                        </label>
+                        <label for="imagen-file-edit" class="btn waves-effect btn-reset"
+                               style="cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;">
+                            <i class="material-icons" style="font-size:18px;">upload</i>
+                            Subir nueva imagen
+                        </label>
+                        <input asp-for="ImageFile" id="imagen-file-edit" type="file"
+                               accept=".jpg,.jpeg,.png,.webp,.gif"
+                               style="display:none;" />
+                        <span asp-validation-for="ImageFile" class="af-field-error" style="display:block;margin-top:.4rem;"></span>
+                        <span id="edit-file-label" style="color:var(--af-text-muted);font-size:.82rem;margin-left:.8rem;vertical-align:middle;">
+                            Ningún archivo seleccionado
+                        </span>
                     </div>
 
-                    <div style="margin-bottom:1.5rem;">
-                        <img id="imagePreview"
-                             src=""
-                             alt="Preview"
-                             style="display:none;width:100%;max-height:220px;object-fit:cover;border-radius:8px;border:1px solid var(--af-border);" />
+                    <!-- Preview de nueva imagen -->
+                    <div id="new-preview-wrap" style="display:none;margin-bottom:1.5rem;">
+                        <p style="color:var(--af-text-muted);font-size:.82rem;margin-bottom:.4rem;">Nueva imagen:</p>
+                        <img id="newImagePreview" src="" alt="Preview"
+                             style="width:100%;max-height:200px;object-fit:cover;border-radius:8px;border:1px solid var(--af-border);" />
                     </div>
 
                     <div style="display:flex;gap:.8rem;justify-content:flex-end;border-top:1px solid var(--af-border);padding-top:1.3rem;">
@@ -100,4 +129,28 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        const fileEdit      = document.getElementById('imagen-file-edit');
+        const newWrap       = document.getElementById('new-preview-wrap');
+        const newPreview    = document.getElementById('newImagePreview');
+        const editFileLabel = document.getElementById('edit-file-label');
+
+        if (fileEdit) {
+            fileEdit.addEventListener('change', function () {
+                const file = this.files[0];
+                if (file) {
+                    editFileLabel.textContent = file.name;
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        newPreview.src = e.target.result;
+                        newWrap.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    editFileLabel.textContent = 'Ningún archivo seleccionado';
+                    newWrap.style.display = 'none';
+                }
+            });
+        }
+    </script>
 }

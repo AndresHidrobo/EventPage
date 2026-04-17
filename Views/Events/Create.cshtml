@@ -1,8 +1,11 @@
 @model Eventual.Models.Events
+@{
+var minDate = DateTime.Today.ToString("yyyy-MM-dd");
+}
 <link rel="stylesheet" href="~/css/eventual.css" asp-append-version="true" />
 
 <main class="form-wrapper">
-  <form id="urban-form" asp-action="Create" asp-controller="Events" method="post">
+  <form id="urban-form" asp-action="Create" asp-controller="Events" method="post" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
 
     <!-- INFORMACIÓN BÁSICA -->
@@ -25,13 +28,13 @@
       <div class="input-field" style="margin-top:1.75rem;">
         <i class="material-icons prefix">notes</i>
         <textarea asp-for="Description" id="descripcion-evento"
-                  class="materialize-textarea validate" data-length="500"></textarea>
+                  class="materialize-textarea validate" data-length="2000"></textarea>
         <label asp-for="Description" for="descripcion-evento">
           Descripción del evento
           <span class="required-badge">obligatorio</span>
         </label>
         <span asp-validation-for="Description" class="helper-text red-text"></span>
-        <span class="helper-text field-note">Describe la propuesta, artistas, formato, etc.</span>
+        <span class="helper-text field-note">Describe la propuesta, artistas, formato, etc. (mín. 10 caracteres)</span>
       </div>
 
     </div>
@@ -55,13 +58,13 @@
       <!-- Fecha -->
       <div class="input-field" style="margin-top:1.75rem;">
         <i class="material-icons prefix">calendar_today</i>
-        <!-- datetime-local permite binding directo a DateTime sin parseo -->
-        <input asp-for="EventDate" id="fecha-evento" type="date" class="validate" />
+        <input asp-for="EventDate" id="fecha-evento" type="date" class="validate" min="@minDate" />
         <label asp-for="EventDate" for="fecha-evento" class="active">
           Fecha del evento
           <span class="required-badge">obligatorio</span>
         </label>
         <span asp-validation-for="EventDate" class="helper-text red-text"></span>
+        <span class="helper-text field-note">Solo se permiten fechas de hoy en adelante.</span>
       </div>
 
     </div>
@@ -69,14 +72,24 @@
     <!-- POSTER -->
     <p class="form-section-label">03 &mdash; Poster del evento</p>
     <div class="form-card">
-      <div class="input-field">
-        <i class="material-icons prefix">link</i>
-        <input asp-for="Poster" id="poster-url" type="url" class="validate" />
-        <label asp-for="Poster" for="poster-url">
-          URL del poster / imagen
+
+      <div style="margin-bottom:1rem;">
+        <label style="display:block;color:var(--af-text-muted);font-size:.85rem;margin-bottom:.6rem;">
+          <i class="material-icons" style="font-size:1rem;vertical-align:middle;margin-right:.3rem;">image</i>
+          Seleccionar imagen (JPG, PNG, WEBP, GIF) — campo opcional. Se ajustará a máx. 1200×800 px.
         </label>
-        <span asp-validation-for="Poster" class="helper-text red-text"></span>
-        <span class="helper-text field-note">Enlace directo a la imagen (JPG, PNG, WEBP). Campo opcional.</span>
+        <label for="imagen-file" class="btn waves-effect btn-reset"
+               style="cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;">
+          <i class="material-icons" style="font-size:18px;">upload</i>
+          Subir imagen
+        </label>
+        <input asp-for="ImageFile" id="imagen-file" type="file"
+               accept=".jpg,.jpeg,.png,.webp,.gif"
+               style="display:none;" />
+        <span asp-validation-for="ImageFile" class="helper-text red-text" style="display:block;margin-top:.4rem;"></span>
+        <span id="file-name-label" style="color:var(--af-text-muted);font-size:.82rem;margin-left:.8rem;vertical-align:middle;">
+          Ningún archivo seleccionado
+        </span>
       </div>
 
       <!-- Preview en tiempo real -->
@@ -84,7 +97,7 @@
         <img id="poster-preview"
              src=""
              alt="Preview poster"
-             style="max-height:200px;border-radius:8px;border:1px solid rgba(255,255,255,.15);object-fit:cover;" />
+             style="max-height:220px;width:100%;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,.15);" />
       </div>
     </div>
 
@@ -103,25 +116,30 @@
 </main>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-    <script>
-        // Preview de imagen desde URL
-        const posterInput = document.getElementById('poster-url');
-        const previewWrap = document.getElementById('poster-preview-wrap');
-        const previewImg  = document.getElementById('poster-preview');
+<partial name="_ValidationScriptsPartial" />
+<script>
+  // Preview de imagen al seleccionar archivo
+  const fileInput   = document.getElementById('imagen-file');
+  const previewWrap = document.getElementById('poster-preview-wrap');
+  const previewImg  = document.getElementById('poster-preview');
+  const fileLabel   = document.getElementById('file-name-label');
 
-        if (posterInput) {
-            posterInput.addEventListener('input', function () {
-                const url = this.value.trim();
-                if (url) {
-                    previewImg.src = url;
-                    previewImg.style.display = 'block';
-                    previewWrap.style.display = 'block';
-                    previewImg.onerror = () => previewWrap.style.display = 'none';
-                } else {
-                    previewWrap.style.display = 'none';
-                }
-            });
-        }
-    </script>
+  if (fileInput) {
+    fileInput.addEventListener('change', function () {
+      const file = this.files[0];
+      if (file) {
+        fileLabel.textContent = file.name;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          previewImg.src = e.target.result;
+          previewWrap.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        fileLabel.textContent = 'Ningún archivo seleccionado';
+        previewWrap.style.display = 'none';
+      }
+    });
+  }
+</script>
 }
